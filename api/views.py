@@ -16,20 +16,9 @@ class MessagesListView (generics.ListCreateAPIView):
   def perform_create(self, serializer):
     return Response({"message": "good"})
 
-class ProjectListCreateView (generics.ListCreateAPIView):
+class ProjectsListView (generics.ListAPIView):
   queryset = Project.objects.all()
   serializer_class = ProjectSerializer
-
-  def perform_create(self, serializer):
-    serializer.data['images'] = "new field init"
-    print(serializer.data)
-    serializer.save()
-    content = { 
-      'name': 'successful request'
-    }
-    
-    return Response(content)
-
 
 class CreateProject(APIView):
 
@@ -62,29 +51,3 @@ class CreateProject(APIView):
       saved_project = serializer.save()
 
     return Response({"message": "success"})
-
-class ExampleView(APIView):
-  authentication_classes = [SessionAuthentication, BasicAuthentication]
-  permission_classes = []
-
-  def get(self, request, format=None):
-    content = {
-        'user': str(request.user),  # `django.contrib.auth.User` instance.
-        'auth': str(request.auth),  # None
-    }
-    return Response(content)
-
-
-class TestingUploadView(APIView):
-  def post(self, request):
- 
-    image_stream = request.data.get('image')
-
-    if image_stream[0:15] == "data:image/jpeg":
-      file_type = "jpg"
-    else: 
-      file_type = "png"
-
-    # res = put_image("trying_extension2", source_data = image_stream, file_ext= file_type)
-    img_url = upload_file_to_folder("portfolio project", image_stream)
-    return Response({"file path": img_url})
